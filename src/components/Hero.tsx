@@ -71,7 +71,7 @@ export function Hero({ initialFeaturedIndex = 0 }: HeroProps) {
     <section ref={containerRef} className="relative h-[250vh]">
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         <BubbleBackground
-          className="absolute inset-0"
+          className="absolute inset-0 z-0"
           interactive={true}
           colors={{
             first: "201,24,74",
@@ -83,11 +83,11 @@ export function Hero({ initialFeaturedIndex = 0 }: HeroProps) {
           }}
         />
 
-        <div className="container-shell relative z-10 flex h-full flex-col md:grid md:grid-cols-12 items-center py-12 md:py-0 gap-8 md:gap-0">
+        <div className="container-shell relative z-10 flex h-full flex-col md:grid md:grid-cols-12 items-center py-12 md:py-0 gap-8 md:gap-0 pointer-events-none">
           
           <motion.div
             style={{ opacity: textOpacity, scale: textScale, filter: textBlur }}
-            className="z-20 md:col-span-5 lg:col-span-4 flex flex-col justify-center space-y-4 md:space-y-6 text-center md:text-left order-2 md:order-1"
+            className="z-20 md:col-span-5 lg:col-span-4 flex flex-col justify-center space-y-4 md:space-y-6 text-center md:text-left order-2 md:order-1 pointer-events-none"
           >
             <div className="space-y-2">
               <h1 className="text-3xl font-bold leading-[1.1] sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl">
@@ -100,7 +100,7 @@ export function Hero({ initialFeaturedIndex = 0 }: HeroProps) {
               Start with fragrances you already love. We decode your taste fingerprint and reveal recommendations that make immediate sense.
             </p>
 
-            <div className="flex flex-wrap gap-2 sm:gap-3 justify-center md:justify-start pt-2">
+            <div className="flex flex-wrap gap-2 sm:gap-3 justify-center md:justify-start pt-2 pointer-events-auto">
               <FeatureChip icon={<Compass className="h-4 w-4" />} label="DNA" />
               <FeatureChip icon={<Fingerprint className="h-4 w-4" />} label="Fingerprint" />
               <FeatureChip icon={<Sparkles className="h-4 w-4" />} label="Similar" />
@@ -116,7 +116,7 @@ export function Hero({ initialFeaturedIndex = 0 }: HeroProps) {
             }}
             className="z-30 md:col-span-2 lg:col-span-4 flex items-center justify-center pointer-events-none order-1 md:order-2"
           >
-            <div className="relative w-[40vw] max-w-[180px] sm:max-w-[220px] md:w-[20vw] md:max-w-[280px] lg:max-w-[320px] aspect-[3/4]">
+            <div className="relative w-[40vw] max-w-[180px] sm:max-w-[220px] md:w-[20vw] md:max-w-[280px] lg:max-w-[320px] aspect-3/4">
               <motion.div
                 animate={{ y: [0, -15, 0] }}
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
@@ -136,7 +136,7 @@ export function Hero({ initialFeaturedIndex = 0 }: HeroProps) {
 
           <motion.div
             style={{ opacity: textOpacity, scale: textScale, filter: textBlur }}
-            className="z-20 md:col-span-5 lg:col-span-4 flex flex-col items-center md:items-end md:justify-end md:pb-16 lg:pb-24 h-full w-full order-3"
+            className="z-20 md:col-span-5 lg:col-span-4 flex flex-col items-center md:items-end md:justify-end md:pb-16 lg:pb-24 h-full w-full order-3 pointer-events-none"
           >
             <div className="space-y-4 md:space-y-6 text-center md:text-right max-w-sm md:max-w-xs lg:max-w-sm">
               <div className="space-y-1 md:space-y-2">
@@ -144,7 +144,7 @@ export function Hero({ initialFeaturedIndex = 0 }: HeroProps) {
                   Ready to find your perfect scent?
                 </h3>
               </div>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-end">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-end pointer-events-auto">
                 <Button size="lg" onClick={() => scrollToSection("final-cta")} className="px-6 lg:px-8 shadow-xl shadow-primary/20 text-sm lg:text-base">
                   Find my match
                 </Button>
@@ -160,7 +160,7 @@ export function Hero({ initialFeaturedIndex = 0 }: HeroProps) {
             className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
           >
             <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Scroll</span>
-            <div className="h-8 md:h-10 w-px bg-gradient-to-b from-primary to-transparent" />
+            <div className="h-8 md:h-10 w-px bg-linear-to-b from-primary to-transparent" />
           </motion.div>
         </div>
       </div>
