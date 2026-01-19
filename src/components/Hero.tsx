@@ -81,9 +81,9 @@ export function Hero({ initialFeaturedIndex = 0 }: HeroProps) {
   });
 
   return (
-    <section 
-      ref={containerRef} 
-      className="relative h-[200vh]"
+    <section
+      ref={containerRef}
+      className="relative min-h-[170vh] md:min-h-[200vh]"
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         <BubbleBackground
@@ -100,7 +100,7 @@ export function Hero({ initialFeaturedIndex = 0 }: HeroProps) {
           }}
         />
 
-        <div className="container-shell relative z-10 flex h-full items-center justify-center text-center">
+        <div className="container-shell relative z-10 flex h-full flex-col items-center justify-center pt-24 pb-16 text-center sm:pt-24 md:pt-28 lg:pt-32">
           
           <motion.div
             style={{ 
@@ -108,15 +108,15 @@ export function Hero({ initialFeaturedIndex = 0 }: HeroProps) {
               scale: textScale,
               filter: textBlur
             }}
-            className="glass-panel relative z-20 space-y-6 p-8 md:p-10 max-w-3xl"
+            className="glass-panel relative z-20 mx-auto w-full max-w-3xl space-y-6 px-5 py-6 sm:px-6 sm:py-8 md:p-10"
           >
             <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground">
               Personalized perfume discovery
             </p>
-            <h1 className="text-4xl font-semibold leading-tight md:text-5xl lg:text-6xl">
-              Discover perfumes that <span className="text-gradient">actually match</span> your taste
+            <h1 className="text-3xl font-bold leading-tight sm:text-4xl md:text-5xl lg:text-6xl">
+              Discover perfumes that actually match your taste
             </h1>
-            <p className="text-base leading-relaxed text-muted-foreground md:text-lg">
+            <p className="text-sm leading-relaxed text-muted-foreground sm:text-base md:text-lg">
               Start with fragrances you already love. We decode your taste fingerprint and
               reveal recommendations that make immediate sense.
             </p>
@@ -144,7 +144,7 @@ export function Hero({ initialFeaturedIndex = 0 }: HeroProps) {
             }}
             className="absolute inset-0 flex items-center justify-center pointer-events-none z-30"
           >
-            <div className="relative w-[300px] md:w-[450px] lg:w-[550px] aspect-[3/4]">
+            <div className="relative aspect-[3/4] w-[60vw] max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
               <motion.div
                 animate={{
                   y: [0, -15, 0],
@@ -168,9 +168,9 @@ export function Hero({ initialFeaturedIndex = 0 }: HeroProps) {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             style={{ opacity: useTransform(smoothProgress, [0, 0.1], [1, 0]) }}
-            className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+            className="absolute bottom-6 sm:bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
           >
             <span className="text-[10px] uppercase tracking-widest text-muted-foreground">Scroll to explore</span>
             <div className="h-12 w-[1px] bg-gradient-to-b from-primary/50 to-transparent" />

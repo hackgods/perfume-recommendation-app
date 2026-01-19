@@ -67,7 +67,7 @@
   }
   
   .glass-panel {
-    @apply bg-white/10 backdrop-blur-[30px] border border-white/40 rounded-[28px];
+    @apply bg-white/50 backdrop-blur-[50px] border border-white/50 rounded-[28px];
   }
   
   .feature-chip {
