@@ -15,18 +15,10 @@ import { FeatureChip } from "@/components/ui/FeatureChip";
 import { BubbleBackground } from "@/components/animate-ui/components/backgrounds/bubble";
 
 const bottleImages = [
-  {
-    src: "/perfumes/bottle-1.png",
-  },
-  {
-    src: "/perfumes/bottle-2.png",
-  },
-  {
-    src: "/perfumes/bottle-3.png",
-  },
-  {
-    src: "/perfumes/bottle-4.png",
-  },
+  { src: "/perfumes/bottle-1.png" },
+  { src: "/perfumes/bottle-2.png" },
+  { src: "/perfumes/bottle-3.png" },
+  { src: "/perfumes/bottle-4.png" },
 ] as const;
 
 type HeroProps = {
@@ -47,49 +39,40 @@ export function Hero({ initialFeaturedIndex = 0 }: HeroProps) {
     restDelta: 0.001,
   });
 
-  const textOpacity = useTransform(smoothProgress, [0, 0.2, 0.4], [1, 1, 0]);
+  // Animation Maps
+  const textOpacity = useTransform(smoothProgress, [0, 0.2, 0.4], [1, 1, 1]);
   const textScale = useTransform(smoothProgress, [0, 0.4], [1, 0.9]);
-  const textBlur = useTransform(smoothProgress, [0, 0.3], ["blur(0px)", "blur(10px)"]);
+  const textBlur = useTransform(smoothProgress, [0, 0.3], ["blur(0px)", "blur(0px)"]);
 
-  // Phase 1: Comes into view (0 -> 0.3)
-  // Phase 2: Gets VERY close/huge (0.3 -> 0.7)
-  // Phase 3: Slides up and out (0.7 -> 1.0)
-  
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) element.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const bottleScale = useTransform(smoothProgress, [0, 0.3, 0.7, 0.85], [0.4, 0.6, 0.8, 1]);
-  const bottleY = useTransform(smoothProgress, [0, 0.7, 1], ["20%", "0%", "-150%"]);
-  const bottleOpacity = useTransform(smoothProgress, [0, 0.1, 0.85, 1], [0, 1, 1, 0]);
+  const bottleScale = useTransform(smoothProgress, [0, 0.3, 0.7, 0.85], [1, 1.2, 1.3, 1.4]);
+  const bottleY = useTransform(smoothProgress, [0, 0.7, 1], ["15%", "0%", "-20%"]);
+  const bottleOpacity = useTransform(smoothProgress, [0, 0.85, 1], [1, 1, 1]);
   const bottleRotate = useTransform(smoothProgress, [0, 1], [-10, 10]);
 
   const [featuredIndex] = useState(
     () => Math.abs(initialFeaturedIndex) % bottleImages.length
   );
-
   const featuredBottle = bottleImages[featuredIndex];
 
-  const autoScrollTriggeredRef = useRef(false);
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) element.scrollIntoView({ behavior: "smooth" });
+  };
 
+  const autoScrollTriggeredRef = useRef(false);
   useMotionValueEvent(smoothProgress, "change", (value) => {
-    if (!autoScrollTriggeredRef.current && value > 0.85) {
+    if (!autoScrollTriggeredRef.current && value > 0.95) {
       autoScrollTriggeredRef.current = true;
       scrollToSection("how-it-works");
     }
   });
 
   return (
-    <section
-      ref={containerRef}
-      className="relative min-h-[170vh] md:min-h-[200vh]"
-    >
+    <section ref={containerRef} className="relative h-[250vh]">
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         <BubbleBackground
           className="absolute inset-0"
           interactive={true}
-          transition={{ stiffness: 100, damping: 40 }}
           colors={{
             first: "201,24,74",
             second: "255,143,163",
@@ -100,38 +83,28 @@ export function Hero({ initialFeaturedIndex = 0 }: HeroProps) {
           }}
         />
 
-        <div className="container-shell relative z-10 flex h-full flex-col items-center justify-center pt-24 pb-16 text-center sm:pt-24 md:pt-28 lg:pt-32">
+        <div className="container-shell relative z-10 flex h-full flex-col md:grid md:grid-cols-12 items-center py-12 md:py-0 gap-8 md:gap-0">
           
           <motion.div
-            style={{ 
-              opacity: textOpacity, 
-              scale: textScale,
-              filter: textBlur
-            }}
-            className="glass-panel relative z-20 mx-auto w-full max-w-3xl space-y-6 px-5 py-6 sm:px-6 sm:py-8 md:p-10"
+            style={{ opacity: textOpacity, scale: textScale, filter: textBlur }}
+            className="z-20 md:col-span-5 lg:col-span-4 flex flex-col justify-center space-y-4 md:space-y-6 text-center md:text-left order-2 md:order-1"
           >
-            <p className="text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground">
-              Personalized perfume discovery
-            </p>
-            <h1 className="text-3xl font-bold leading-tight sm:text-4xl md:text-5xl lg:text-6xl">
-              Discover perfumes that actually match your taste
-            </h1>
-            <p className="text-sm leading-relaxed text-muted-foreground sm:text-base md:text-lg">
-              Start with fragrances you already love. We decode your taste fingerprint and
-              reveal recommendations that make immediate sense.
-            </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              <FeatureChip icon={<Compass className="h-4 w-4" />} label="Perfume DNA" />
-              <FeatureChip icon={<Fingerprint className="h-4 w-4" />} label="Taste Fingerprint" />
-              <FeatureChip icon={<Sparkles className="h-4 w-4" />} label="Find Similar" />
+            <div className="space-y-2">
+              <h1 className="text-3xl font-bold leading-[1.1] sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl">
+                Discover perfumes that{" "}
+                <span className="text-gradient">match</span>{" "}
+                <span className="text-gradient">your taste</span>
+              </h1>
             </div>
-            <div className="flex flex-wrap justify-center gap-4 pt-4">
-              <Button size="lg" onClick={() => scrollToSection("final-cta")}>
-                Find perfumes I&apos;ll love
-              </Button>
-              <Button variant="secondary" size="lg" onClick={() => scrollToSection("how-it-works")}>
-                See how it works
-              </Button>
+            
+            <p className="text-sm leading-relaxed text-muted-foreground sm:text-base md:text-lg max-w-md mx-auto md:mx-0">
+              Start with fragrances you already love. We decode your taste fingerprint and reveal recommendations that make immediate sense.
+            </p>
+
+            <div className="flex flex-wrap gap-2 sm:gap-3 justify-center md:justify-start pt-2">
+              <FeatureChip icon={<Compass className="h-4 w-4" />} label="DNA" />
+              <FeatureChip icon={<Fingerprint className="h-4 w-4" />} label="Fingerprint" />
+              <FeatureChip icon={<Sparkles className="h-4 w-4" />} label="Similar" />
             </div>
           </motion.div>
 
@@ -142,38 +115,53 @@ export function Hero({ initialFeaturedIndex = 0 }: HeroProps) {
               opacity: bottleOpacity,
               rotate: bottleRotate,
             }}
-            className="absolute inset-0 flex items-center justify-center pointer-events-none z-30"
+            className="z-30 md:col-span-2 lg:col-span-4 flex items-center justify-center pointer-events-none order-1 md:order-2"
           >
-            <div className="relative aspect-[3/4] w-[60vw] max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
+            <div className="relative w-[40vw] max-w-[180px] sm:max-w-[220px] md:w-[20vw] md:max-w-[280px] lg:max-w-[320px] aspect-[3/4]">
               <motion.div
-                animate={{
-                  y: [0, -15, 0],
-                }}
-                transition={{
-                  duration: 6,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="w-full h-full"
+                animate={{ y: [0, -15, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                className="w-full h-full relative"
               >
                 <Image
                   src={featuredBottle.src}
-                  alt='Bottle Image'
+                  alt="Feature Perfume"
                   fill
-                  className="object-contain"
+                  className="object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.2)] md:drop-shadow-[0_40px_80px_rgba(0,0,0,0.25)]"
                   priority
                 />
-                
+                <div className="absolute inset-0 -z-10 bg-primary/10 blur-[60px] md:blur-[100px] rounded-full" />
               </motion.div>
             </div>
           </motion.div>
 
           <motion.div
-            style={{ opacity: useTransform(smoothProgress, [0, 0.1], [1, 0]) }}
-            className="absolute bottom-6 sm:bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+            style={{ opacity: textOpacity, scale: textScale, filter: textBlur }}
+            className="z-20 md:col-span-5 lg:col-span-4 flex flex-col items-center md:items-end md:justify-end md:pb-16 lg:pb-24 h-full w-full order-3"
           >
-            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">Scroll to explore</span>
-            <div className="h-12 w-[1px] bg-gradient-to-b from-primary/50 to-transparent" />
+            <div className="space-y-4 md:space-y-6 text-center md:text-right max-w-sm md:max-w-xs lg:max-w-sm">
+              <div className="space-y-1 md:space-y-2">
+                <h3 className="text-lg font-medium sm:text-xl lg:text-2xl">
+                  Ready to find your perfect scent?
+                </h3>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-end">
+                <Button size="lg" onClick={() => scrollToSection("final-cta")} className="px-6 lg:px-8 shadow-xl shadow-primary/20 text-sm lg:text-base">
+                  Find my match
+                </Button>
+                <Button variant="secondary" size="lg" onClick={() => scrollToSection("how-it-works")} className="text-sm lg:text-base">
+                  How it works
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            style={{ opacity: useTransform(smoothProgress, [0, 0.05], [1, 0]) }}
+            className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+          >
+            <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Scroll</span>
+            <div className="h-8 md:h-10 w-px bg-gradient-to-b from-primary to-transparent" />
           </motion.div>
         </div>
       </div>
