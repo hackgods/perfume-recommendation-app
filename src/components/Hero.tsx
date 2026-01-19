@@ -91,9 +91,8 @@ export function Hero({ initialFeaturedIndex = 0 }: HeroProps) {
           >
             <div className="space-y-2">
               <h1 className="text-3xl font-bold leading-[1.1] sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl">
-                Discover perfumes that{" "}
-                <span className="text-gradient">match</span>{" "}
-                <span className="text-gradient">your taste</span>
+                Discover perfumes that match your{" "}
+                <span className="gradient-text-primary">taste</span>
               </h1>
             </div>
             

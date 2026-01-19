@@ -54,8 +54,8 @@
 }
 
 @layer utilities {
-  .gradient-text {
-    @apply bg-gradient-to-r from-[#c9184a] to-[#ff8fa3] bg-clip-text text-transparent;
+  .gradient-text-primary {
+    @apply bg-gradient-to-r from-rose-600/80 to-red-900 bg-clip-text text-transparent;
   }
   
   .glass-card {
