@@ -51,7 +51,7 @@ function Navigation() {
                 key={link.href}
                 type="button"
                 onClick={() => scrollToSection(link.href)}
-                className="text-muted-foreground transition-colors hover:text-foreground"
+                className="cursor-pointer text-muted-foreground transition-colors hover:text-foreground"
               >
                 {link.label}
               </button>
@@ -67,7 +67,7 @@ function Navigation() {
           <button
             type="button"
             aria-label="Toggle navigation"
-            className="inline-flex items-center justify-center rounded-full bg-white/60 p-2 text-foreground shadow-sm backdrop-blur md:hidden"
+            className="cursor-pointer inline-flex items-center justify-center rounded-full bg-white/60 p-2 text-foreground shadow-sm backdrop-blur md:hidden"
             onClick={() => setOpen((prev) => !prev)}
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -93,7 +93,7 @@ function Navigation() {
                 key={link.href}
                 type="button"
                 onClick={() => scrollToSection(link.href)}
-                className="text-left text-foreground"
+                className="cursor-pointer text-left text-foreground"
               >
                 {link.label}
               </button>
