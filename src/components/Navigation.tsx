@@ -11,7 +11,6 @@ import { cn } from "@/lib/utils";
 const navLinks = [
   { label: "Features", href: "#features" },
   { label: "How it works", href: "/technical" },
-  { label: "About", href: "#about" },
 ];
 
 function Navigation() {
