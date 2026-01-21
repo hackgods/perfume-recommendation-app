@@ -1,6 +1,15 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import type { Metadata } from "next";
+
+// Force static generation for fast access
+export const dynamic = 'force-static';
+
+export const metadata: Metadata = {
+  title: "Technical Documentation | Perfume Recommendation System",
+  description: "Learn how the perfume recommendation system works, from vector embeddings to taste fingerprints and the recommendation pipeline.",
+};
 
 export default function TechnicalPage() {
   return (
