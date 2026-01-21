@@ -106,9 +106,9 @@ export function Hero({ initialFeaturedIndex = 0 }: { initialFeaturedIndex?: numb
             }`}
           >
             <div className="space-y-1 md:space-y-2">
-              <h1 className="gradient-text-glass-dark text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1]">
+              <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1]">
                 Discover perfumes that match your{" "}
-                <span className="gradient-text-glass md:gradient-text-primary">taste</span>
+                <span className="gradient-text-primary">taste</span>
               </h1>
             </div>
             
