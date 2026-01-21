@@ -63,6 +63,7 @@ export interface SearchResultsResponse {
  */
 export interface SearchPerfumesParams {
   query: string;
+  gender?: "male" | "female" | "unisex";
   limit?: number;
   offset?: number;
 }
@@ -157,7 +158,7 @@ async function fetchAPI<T>(
 export async function searchPerfumes(
   params: SearchPerfumesParams
 ): Promise<SearchResultsResponse> {
-  const { query, limit = 15, offset = 0 } = params;
+  const { query, gender, limit = 15, offset = 0 } = params;
 
   if (!query || query.trim().length < 2) {
     return {
@@ -176,6 +177,11 @@ export async function searchPerfumes(
     limit: limit.toString(),
     offset: offset.toString(),
   });
+
+  // Only add gender parameter if it's specified
+  if (gender) {
+    queryParams.append("gender", gender);
+  }
 
   const response = await fetchAPI<{ data: SearchResultsResponse }>(
     `/perfumes/search?${queryParams.toString()}`

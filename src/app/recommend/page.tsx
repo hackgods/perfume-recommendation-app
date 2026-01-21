@@ -38,7 +38,17 @@ export default function RecommendPage() {
     setIsSearching(true);
     setSearchError(null);
     try {
-      const results = await searchPerfumes({ query: query.trim() });
+      // Map perfumeType to gender parameter
+      // "any" -> undefined (no gender param), others map directly
+      const gender =
+        perfumeType && perfumeType !== "any"
+          ? (perfumeType as "male" | "female" | "unisex")
+          : undefined;
+
+      const results = await searchPerfumes({
+        query: query.trim(),
+        gender,
+      });
       setSearchResults(results.results);
       setShowDropdown(true);
     } catch (error) {
@@ -52,7 +62,7 @@ export default function RecommendPage() {
     } finally {
       setIsSearching(false);
     }
-  }, []);
+  }, [perfumeType]);
 
   useEffect(() => {
     if (searchTimeoutRef.current) {
@@ -106,7 +116,7 @@ export default function RecommendPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#fff0f3] py-12 md:py-20">
+    <div className="min-h-screen bg-bg-tint py-12 md:py-20">
       <div className="container-shell max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
