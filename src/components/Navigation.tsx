@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,9 @@ const navLinks = [
 
 function Navigation() {
   const [open, setOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const lastScrollY = useRef(0);
+  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const scrollToSection = (href: string) => {
     const id = href.replace("#", "");
@@ -24,13 +27,70 @@ function Navigation() {
     setOpen(false);
   };
 
+  useEffect(() => {
+    // Initialize scroll position
+    lastScrollY.current = window.scrollY;
+    setIsVisible(window.scrollY < 10);
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const scrollDifference = currentScrollY - lastScrollY.current;
+
+      // Clear existing timeout
+      if (scrollTimeout.current) {
+        clearTimeout(scrollTimeout.current);
+      }
+
+      // Always show navbar at the very top
+      if (currentScrollY < 10) {
+        setIsVisible(true);
+        lastScrollY.current = currentScrollY;
+        return;
+      }
+
+      // Show navbar when scrolling up
+      if (scrollDifference < 0) {
+        setIsVisible(true);
+      } 
+      // Hide navbar when scrolling down
+      else if (scrollDifference > 0) {
+        setIsVisible(false);
+      }
+
+      lastScrollY.current = currentScrollY;
+
+      // Show navbar after 1 second of no scrolling
+      scrollTimeout.current = setTimeout(() => {
+        setIsVisible(true);
+      }, 1000);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (scrollTimeout.current) {
+        clearTimeout(scrollTimeout.current);
+      }
+    };
+  }, []);
+
   return (
     <header className="fixed top-4 left-0 right-0 z-50 w-full">
       <div className="container-shell flex justify-center">
         <motion.nav
           initial={{ y: -16, opacity: 0, borderRadius: 9999 }}
-          animate={{ y: 0, opacity: 1, borderRadius: 9999 }}
-          transition={{ type: "spring", stiffness: 140, damping: 18 }}
+          animate={{
+            y: isVisible ? 0 : -100,
+            opacity: isVisible ? 1 : 0,
+            borderRadius: 9999,
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 140,
+            damping: 18,
+            duration: 0.3,
+          }}
           whileHover={{ scale: 1.01, boxShadow: "0 18px 45px rgba(0,0,0,0.12)" }}
           className="glass-panel flex w-full max-w-5xl items-center justify-between rounded-[999px] border border-white/40 px-4 py-2 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-xl md:px-6 md:py-3"
         >
