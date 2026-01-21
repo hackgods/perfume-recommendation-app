@@ -115,7 +115,7 @@ export function Hero({ initialFeaturedIndex = 0 }: { initialFeaturedIndex?: numb
             </div>
             
             <p className="text-xs sm:text-sm md:text-lg leading-relaxed text-muted-foreground max-w-md mx-auto md:mx-0 line-clamp-2 sm:line-clamp-none">
-              Start with fragrances you already love. We decode your taste fingerprint and reveal recommendations that make immediate sense.
+              Start with fragrances you already love. We decode your taste fingerprint and reveal recommendations that match your taste.
             </p>
 
             <div className="flex flex-wrap gap-1.5 sm:gap-3 justify-center md:justify-start pt-1 pointer-events-auto">

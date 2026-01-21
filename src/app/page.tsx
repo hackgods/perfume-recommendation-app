@@ -5,6 +5,20 @@ import { TasteFingerprint } from "@/components/TasteFingerprint";
 import { ExplainableMatches } from "@/components/ExplainableMatches";
 import { FinalCTA } from "@/components/FinalCTA";
 import { Footer } from "@/components/Footer";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Discover Perfumes That Match Your Taste",
+  description: "Start with fragrances you already love. We decode your taste fingerprint and reveal recommendations that match your taste. An intelligent perfume discovery system powered by machine learning.",
+  openGraph: {
+    title: "Discover Perfumes That Match Your Taste",
+    description: "Start with fragrances you already love. We decode your taste fingerprint and reveal recommendations that match your taste.",
+    type: "website",
+  },
+  alternates: {
+    canonical: "/",
+  },
+};
 
 export default function Home() {
   const featuredIndex = Math.floor(Math.random() * 4);

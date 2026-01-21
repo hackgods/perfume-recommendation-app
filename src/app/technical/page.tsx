@@ -7,13 +7,57 @@ import type { Metadata } from "next";
 export const dynamic = 'force-static';
 
 export const metadata: Metadata = {
-  title: "Technical Documentation | Perfume Recommendation System",
-  description: "Learn how the perfume recommendation system works, from vector embeddings to taste fingerprints and the recommendation pipeline.",
+  title: "Technical Documentation",
+  description: "Learn how the perfume recommendation system works, from vector embeddings to taste fingerprints and the recommendation pipeline. Inspired by Spotify's recommendation philosophy.",
+  keywords: [
+    "perfume recommendation algorithm",
+    "vector embeddings",
+    "perfume DNA",
+    "taste fingerprint",
+    "recommendation system",
+    "machine learning perfume",
+    "collaborative filtering",
+    "semantic similarity",
+  ],
+  openGraph: {
+    title: "Technical Documentation | Perfume Recommendation System",
+    description: "Learn how the perfume recommendation system works, from vector embeddings to taste fingerprints and the recommendation pipeline.",
+    type: "article",
+    authors: ["Saurabh Suresh"],
+  },
+  alternates: {
+    canonical: "/technical",
+  },
 };
 
 export default function TechnicalPage() {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    headline: "Perfume Recommendation System - Technical Documentation",
+    description: "Learn how the perfume recommendation system works, from vector embeddings to taste fingerprints and the recommendation pipeline.",
+    author: {
+      "@type": "Person",
+      name: "Saurabh Suresh",
+      url: "https://www.saurabhsuresh.com",
+    },
+    publisher: {
+      "@type": "Person",
+      name: "Saurabh Suresh",
+    },
+    datePublished: "2024-01-01",
+    dateModified: new Date().toISOString().split("T")[0],
+  };
+
   return (
-    <div className="min-h-screen bg-[#fff0f3]">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData),
+        }}
+      />
+      <div className="min-h-screen bg-[#fff0f3]">
       <div className="container-shell py-12 md:py-16 lg:py-20">
         <div className="mb-8">
           <Link href="/">
@@ -349,5 +393,6 @@ export default function TechnicalPage() {
         </article>
       </div>
     </div>
+    </>
   );
 }
