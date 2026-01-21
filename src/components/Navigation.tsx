@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,21 +10,33 @@ import { cn } from "@/lib/utils";
 
 const navLinks = [
   { label: "Features", href: "#features" },
-  { label: "How it works", href: "#how-it-works" },
+  { label: "How it works", href: "/technical" },
   { label: "About", href: "#about" },
 ];
 
 function Navigation() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(() => {
+    if (typeof window !== "undefined") {
+      return window.scrollY < 10;
+    }
+    return true;
+  });
   const lastScrollY = useRef(0);
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  const scrollToSection = (href: string) => {
-    const id = href.replace("#", "");
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+  const handleNavigation = (href: string) => {
+    // If it's a route (starts with /), navigate using router
+    if (href.startsWith("/")) {
+      router.push(href);
+    } else {
+      // Otherwise, it's a hash link, scroll to section
+      const id = href.replace("#", "");
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
     }
     setOpen(false);
   };
@@ -30,7 +44,6 @@ function Navigation() {
   useEffect(() => {
     // Initialize scroll position
     lastScrollY.current = window.scrollY;
-    setIsVisible(window.scrollY < 10);
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -94,23 +107,19 @@ function Navigation() {
           whileHover={{ scale: 1.01, boxShadow: "0 18px 45px rgba(0,0,0,0.12)" }}
           className="glass-panel flex w-full max-w-5xl items-center justify-between rounded-[999px] border border-white/40 px-4 py-2 shadow-[0_10px_30px_rgba(0,0,0,0.08)] backdrop-blur-xl md:px-6 md:py-3"
         >
-          <a
-            href="#top"
-            className="text-sm font-semibold tracking-tight text-foreground md:text-base"
-            onClick={(e) => {
-              e.preventDefault();
-              scrollToSection("#top");
-            }}
+          <Link
+            href="/"
+            className="text-sm font-semibold tracking-tight text-foreground md:text-base hover:opacity-80 transition-opacity"
           >
             Perfume Recommendation System
-          </a>
+          </Link>
 
           <nav className="hidden items-center gap-8 text-sm font-medium md:flex">
             {navLinks.map((link) => (
               <button
                 key={link.href}
                 type="button"
-                onClick={() => scrollToSection(link.href)}
+                onClick={() => handleNavigation(link.href)}
                 className="cursor-pointer text-muted-foreground transition-colors hover:text-foreground"
               >
                 {link.label}
@@ -119,7 +128,7 @@ function Navigation() {
           </nav>
 
           <div className="hidden md:flex">
-            <Button size="sm" onClick={() => scrollToSection("#final-cta")}>
+            <Button size="sm" onClick={() => handleNavigation("#final-cta")}>
               Get started
             </Button>
           </div>
@@ -152,13 +161,13 @@ function Navigation() {
               <button
                 key={link.href}
                 type="button"
-                onClick={() => scrollToSection(link.href)}
+                onClick={() => handleNavigation(link.href)}
                 className="cursor-pointer text-left text-foreground"
               >
                 {link.label}
               </button>
             ))}
-            <Button size="sm" className="w-full" onClick={() => scrollToSection("#final-cta")}>
+            <Button size="sm" className="w-full" onClick={() => handleNavigation("#final-cta")}>
               Get started
             </Button>
           </div>
