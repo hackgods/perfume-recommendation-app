@@ -55,15 +55,15 @@
 
 @layer utilities {
   .gradient-text-primary {
-    @apply bg-gradient-to-r from-rose-600/80 to-red-900 bg-clip-text text-transparent;
+    @apply bg-linear-to-r from-rose-600/80 to-red-900 bg-clip-text text-transparent;
   }
 
   .gradient-text-glass {
-    @apply bg-gradient-to-r from-white/80 to-zinc-50/80 bg-clip-text text-transparent;
+    @apply bg-linear-to-r from-white/80 to-zinc-50/80 bg-clip-text text-transparent;
   }
 
   .gradient-text-glass-dark {
-    @apply bg-gradient-to-r from-zinc-900/80 to-zinc-800/70 bg-clip-text text-transparent;
+    @apply bg-linear-to-r from-zinc-900/80 to-zinc-800/70 bg-clip-text text-transparent;
   }
   
   .glass-card {
