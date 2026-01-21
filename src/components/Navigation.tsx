@@ -127,7 +127,7 @@ function Navigation() {
           </nav>
 
           <div className="hidden md:flex">
-            <Button size="sm" onClick={() => handleNavigation("#final-cta")}>
+            <Button size="sm" onClick={() => router.push("/recommend")}>
               Get started
             </Button>
           </div>
@@ -166,7 +166,7 @@ function Navigation() {
                 {link.label}
               </button>
             ))}
-            <Button size="sm" className="w-full" onClick={() => handleNavigation("#final-cta")}>
+            <Button size="sm" className="w-full" onClick={() => router.push("/recommend")}>
               Get started
             </Button>
           </div>

@@ -1,13 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { fadeInUp } from "@/lib/animations";
 
 function FinalCTA() {
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  const router = useRouter();
 
   return (
     <motion.section
@@ -29,8 +28,8 @@ function FinalCTA() {
             <p className="text-base text-muted-foreground md:text-lg">
               Start with what you already love. Let the rest make sense.
             </p>
-            <Button size="lg" className="mt-2" onClick={scrollToTop}>
-              Find perfumes I'll love
+            <Button size="lg" className="mt-2" onClick={() => router.push("/recommend")}>
+              Find perfumes I&apos;ll love
             </Button>
           </div>
         </motion.div>

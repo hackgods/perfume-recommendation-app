@@ -162,7 +162,7 @@ export function Hero({ initialFeaturedIndex = 0 }: { initialFeaturedIndex?: numb
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center md:justify-end pointer-events-auto">
                 <Button 
                   size="sm" 
-                  onClick={() => scrollToSection("final-cta")} 
+                  onClick={() => router.push("/recommend")} 
                   className="px-5 sm:px-8 shadow-lg text-xs sm:text-base h-9 sm:h-11"
                 >
                   Find my match
