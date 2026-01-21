@@ -125,7 +125,7 @@ export default function RecommendPage() {
           {/* Header */}
           <div className="text-center space-y-3">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
-              Find Your Perfect <span className="gradient-text-primary">Perfume</span>
+              Let&apos;s find you a <span className="gradient-text-primary">Perfume</span>
             </h1>
             <p className="text-muted-foreground text-base md:text-lg">
               Tell us what you&apos;re looking for and we&apos;ll find perfumes that match your taste
