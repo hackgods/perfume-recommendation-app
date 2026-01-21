@@ -9,6 +9,7 @@ import {
   useMotionValueEvent,
 } from "framer-motion";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Compass, Fingerprint, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FeatureChip } from "@/components/ui/FeatureChip";
@@ -23,6 +24,7 @@ const bottleImages = [
 
 export function Hero({ initialFeaturedIndex = 0 }: { initialFeaturedIndex?: number }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
   const [dimensions, setDimensions] = useState({ isMobile: false, isShort: false });
 
   useEffect(() => {
@@ -168,7 +170,7 @@ export function Hero({ initialFeaturedIndex = 0 }: { initialFeaturedIndex?: numb
                 <Button 
                   variant="secondary" 
                   size="sm" 
-                  onClick={() => scrollToSection("how-it-works")} 
+                  onClick={() => router.push("/technical")} 
                   className="hidden md:inline-flex text-xs sm:text-base h-9 sm:h-11"
                 >
                   How it works
