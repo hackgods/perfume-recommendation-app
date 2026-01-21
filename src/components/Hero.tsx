@@ -23,16 +23,19 @@ const bottleImages = [
 
 export function Hero({ initialFeaturedIndex = 0 }: { initialFeaturedIndex?: number }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const [dimensions, setDimensions] = useState({ isMobile: false, isShort: false });
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768); // md breakpoint
+    const checkDimensions = () => {
+      setDimensions({
+        isMobile: window.innerWidth < 768,
+        isShort: window.innerHeight < 700,
+      });
     };
     
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    checkDimensions();
+    window.addEventListener("resize", checkDimensions);
+    return () => window.removeEventListener("resize", checkDimensions);
   }, []);
 
   const { scrollYProgress } = useScroll({
@@ -49,12 +52,16 @@ export function Hero({ initialFeaturedIndex = 0 }: { initialFeaturedIndex?: numb
   const textOpacity = useTransform(smoothProgress, [0, 0.2, 0.4], [1, 1, 1]);
   const textScale = useTransform(smoothProgress, [0, 0.4], [1, 0.9]);
   
-  // Mobile bottle scale
-  const bottleScaleMobile = useTransform(smoothProgress, [0, 0.3, 0.7, 0.85], [1.3, 1.5, 1.7, 1.9]);
-  // Desktop bottle scale
+  // Taller phones get a more aggressive zoom because they have the vertical runway
+  const bottleScaleMobile = useTransform(
+    smoothProgress, 
+    [0, 0.3, 0.7, 0.85], 
+    dimensions.isShort ? [1.4, 1.6, 1.7, 1.9] : [1.9, 2.1, 2.3, 2.5]
+  );
+  
   const bottleScaleDesktop = useTransform(smoothProgress, [0, 0.3, 0.7, 0.85], [1, 1.1, 1.2, 1.3]);
   
-  const bottleScale = isMobile ? bottleScaleMobile : bottleScaleDesktop;
+  const bottleScale = dimensions.isMobile ? bottleScaleMobile : bottleScaleDesktop;
   const bottleY = useTransform(smoothProgress, [0, 0.7, 1], ["5%", "0%", "-20%"]);
   const bottleRotate = useTransform(smoothProgress, [0, 1], [-10, 10]);
 
@@ -90,16 +97,18 @@ export function Hero({ initialFeaturedIndex = 0 }: { initialFeaturedIndex?: numb
           }}
         />
 
-        <div className="container-shell relative z-10 flex h-full flex-col md:grid md:grid-cols-12 items-center justify-center py-4 sm:py-8 md:py-0 gap-4 sm:gap-6 md:gap-0 pointer-events-none">
+        <div className="container-shell relative z-10 flex h-full flex-col md:grid md:grid-cols-12 items-center justify-center py-[4dvh] md:py-0 gap-[3dvh] sm:gap-[5dvh] md:gap-0 pointer-events-none">
           
-          <motion.div
+        <motion.div
             style={{ opacity: textOpacity, scale: textScale }}
-            className="z-20 md:col-span-5 lg:col-span-4 flex flex-col justify-center space-y-3 md:space-y-6 text-center md:text-left order-2 md:order-1 mt-10 sm:mt-16 md:mt-0"
+            className={`z-20 md:col-span-5 lg:col-span-4 flex flex-col justify-center space-y-3 md:space-y-6 text-center md:text-left order-2 md:order-1 md:mt-0 ${
+              dimensions.isShort ? "mt-[8dvh]" : "mt-[16dvh]"
+            }`}
           >
             <div className="space-y-1 md:space-y-2">
-              <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1]">
+              <h1 className="gradient-text-glass-dark text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1]">
                 Discover perfumes that match your{" "}
-                <span className="gradient-text-primary">taste</span>
+                <span className="gradient-text-glass md:gradient-text-primary">taste</span>
               </h1>
             </div>
             
@@ -122,7 +131,7 @@ export function Hero({ initialFeaturedIndex = 0 }: { initialFeaturedIndex?: numb
             }}
             className="z-30 md:col-span-2 lg:col-span-4 flex items-center justify-center pointer-events-none order-1 md:order-2"
           >
-            <div className="relative w-[35vw] max-w-[140px] xs:max-w-[160px] sm:max-w-[200px] md:w-[20vw] md:max-w-[280px] lg:max-w-[320px] aspect-3/4">
+            <div className="relative w-[45vw] max-w-[140px] xs:max-w-[180px] sm:max-w-[220px] md:w-[20vw] md:max-w-[280px] lg:max-w-[320px] aspect-3/4 max-h-[25vh] sm:max-h-none">
               <motion.div
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
@@ -170,7 +179,7 @@ export function Hero({ initialFeaturedIndex = 0 }: { initialFeaturedIndex?: numb
 
           <motion.div 
             style={{ opacity: useTransform(smoothProgress, [0, 0.05], [1, 0]) }}
-            className="absolute bottom-4 sm:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 z-40"
+            className="absolute bottom-[2dvh] sm:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 z-40"
           >
             <span className="text-[9px] sm:text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Scroll</span>
             <div className="h-6 sm:h-10 w-px bg-linear-to-b from-primary to-transparent" />

@@ -57,6 +57,14 @@
   .gradient-text-primary {
     @apply bg-gradient-to-r from-rose-600/80 to-red-900 bg-clip-text text-transparent;
   }
+
+  .gradient-text-glass {
+    @apply bg-gradient-to-r from-white/80 to-zinc-50/80 bg-clip-text text-transparent;
+  }
+
+  .gradient-text-glass-dark {
+    @apply bg-gradient-to-r from-zinc-900/80 to-zinc-800/70 bg-clip-text text-transparent;
+  }
   
   .glass-card {
     @apply bg-white/15 backdrop-blur-[25px] border border-white/40 rounded-[24px] shadow-[0_8px_24px_rgba(0,0,0,0.05)];
