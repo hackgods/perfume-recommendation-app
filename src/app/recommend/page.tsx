@@ -1,31 +1,16 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Search, X, Plus } from "lucide-react";
+import { Search, X, Plus, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://perfumes.saurabhsuresh.com/api/v1";
-
-type Perfume = {
-  id: number;
-  name: string;
-  brand: string;
-  image: string;
-};
-
-type SearchResponse = {
-  data: {
-    results: Perfume[];
-    pagination: {
-      total: number;
-      limit: number;
-      offset: number;
-      has_more: boolean;
-    };
-  };
-};
+import {
+  searchPerfumes,
+  getRecommendations,
+  type Perfume,
+  type APIError,
+} from "@/lib/api";
 
 type PerfumeType = "male" | "female" | "unisex" | "any";
 
@@ -36,27 +21,34 @@ export default function RecommendPage() {
   const [selectedPerfumes, setSelectedPerfumes] = useState<Perfume[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const searchPerfumes = useCallback(async (query: string) => {
+  const handleSearch = useCallback(async (query: string) => {
     if (!query.trim() || query.length < 2) {
       setSearchResults([]);
       setShowDropdown(false);
+      setSearchError(null);
       return;
     }
 
     setIsSearching(true);
+    setSearchError(null);
     try {
-      const response = await fetch(`${API_URL}/perfumes/search?q=${encodeURIComponent(query)}`);
-      if (!response.ok) throw new Error("Search failed");
-      const data: SearchResponse = await response.json();
-      setSearchResults(data.data.results);
+      const results = await searchPerfumes({ query: query.trim() });
+      setSearchResults(results.results);
       setShowDropdown(true);
     } catch (error) {
-      console.error("Search error:", error);
+      const apiError = error as APIError;
+      setSearchError(
+        apiError.message || "Failed to search perfumes. Please try again."
+      );
       setSearchResults([]);
+      setShowDropdown(false);
+      console.error("Search error:", error);
     } finally {
       setIsSearching(false);
     }
@@ -68,7 +60,7 @@ export default function RecommendPage() {
     }
 
     searchTimeoutRef.current = setTimeout(() => {
-      searchPerfumes(searchQuery);
+      handleSearch(searchQuery);
     }, 300);
 
     return () => {
@@ -76,7 +68,7 @@ export default function RecommendPage() {
         clearTimeout(searchTimeoutRef.current);
       }
     };
-  }, [searchQuery, searchPerfumes]);
+  }, [searchQuery, handleSearch]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -122,7 +114,6 @@ export default function RecommendPage() {
           transition={{ duration: 0.5 }}
           className="space-y-8"
         >
-          {/* Header */}
           <div className="text-center space-y-3">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
               Let&apos;s find you a <span className="gradient-text-primary">Perfume</span>
@@ -132,7 +123,6 @@ export default function RecommendPage() {
             </p>
           </div>
 
-          {/* Step 1: Perfume Type Selection */}
           {!perfumeType && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -156,7 +146,6 @@ export default function RecommendPage() {
             </motion.div>
           )}
 
-          {/* Step 2: Search and Select Perfumes */}
           {perfumeType && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -180,7 +169,6 @@ export default function RecommendPage() {
                 </button>
               </div>
 
-              {/* Search Box */}
               <div className="relative">
                 <div className="relative">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -200,7 +188,6 @@ export default function RecommendPage() {
                   )}
                 </div>
 
-                {/* Search Results Dropdown */}
                 <AnimatePresence>
                   {showDropdown && searchResults.length > 0 && (
                     <motion.div
@@ -228,7 +215,7 @@ export default function RecommendPage() {
                                   : "hover:bg-white/20 cursor-pointer"
                               }`}
                             >
-                              <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-white/10">
+                              <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-white/10">
                                 {perfume.image ? (
                                   <Image
                                     src={perfume.image}
@@ -248,7 +235,7 @@ export default function RecommendPage() {
                                 <p className="text-sm text-muted-foreground truncate">{perfume.brand}</p>
                               </div>
                               {isSelected && (
-                                <div className="flex-shrink-0 text-primary">
+                                <div className="shrink-0 text-primary">
                                   <Plus className="h-5 w-5 rotate-45" />
                                 </div>
                               )}
@@ -261,7 +248,6 @@ export default function RecommendPage() {
                 </AnimatePresence>
               </div>
 
-              {/* Selected Perfumes */}
               {selectedPerfumes.length > 0 && (
                 <div className="space-y-3">
                   <h3 className="text-lg font-semibold text-foreground">Selected Perfumes</h3>
@@ -306,18 +292,48 @@ export default function RecommendPage() {
                 </div>
               )}
 
-              {/* Continue Button */}
+              {/* Error Message */}
+              {searchError && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-2 p-3 rounded-[12px] bg-destructive/10 border border-destructive/20 text-destructive text-sm"
+                >
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  <p>{searchError}</p>
+                </motion.div>
+              )}
+
               {selectedPerfumes.length > 0 && (
                 <div className="pt-4">
                   <Button
                     size="lg"
                     className="w-full md:w-auto"
-                    onClick={() => {
-                      // TODO: Navigate to results or submit
-                      console.log("Selected:", selectedPerfumes, "Type:", perfumeType);
+                    disabled={isSubmitting}
+                    onClick={async () => {
+                      setIsSubmitting(true);
+                      try {
+                        const recommendations = await getRecommendations({
+                          perfume_ids: selectedPerfumes.map((p) => p.id),
+                          type: perfumeType === "any" ? undefined : perfumeType,
+                        });
+                        // TODO: Navigate to results page with recommendations
+                        console.log("Recommendations:", recommendations);
+                      } catch (error) {
+                        const apiError = error as APIError;
+                        setSearchError(
+                          apiError.message ||
+                            "Failed to get recommendations. Please try again."
+                        );
+                        console.error("Recommendation error:", error);
+                      } finally {
+                        setIsSubmitting(false);
+                      }
                     }}
                   >
-                    Get Recommendations ({selectedPerfumes.length})
+                    {isSubmitting
+                      ? "Getting Recommendations..."
+                      : `Get Recommendations (${selectedPerfumes.length})`}
                   </Button>
                 </div>
               )}
