@@ -72,8 +72,58 @@ export interface SearchPerfumesParams {
  * Recommendation request payload
  */
 export interface RecommendationRequest {
-  perfume_ids: number[];
-  type?: "male" | "female" | "unisex" | "any";
+  liked_perfume_ids: number[];
+  limit?: number;
+  diversify_brand?: boolean;
+  gender?: "male" | "female" | "unisex";
+}
+
+/**
+ * Recommendation signals
+ */
+export interface RecommendationSignals {
+  sim: number;
+  dna: number;
+  ward: number;
+  qual: number;
+  perf: number;
+}
+
+/**
+ * Recommendation why explanation
+ */
+export interface RecommendationWhy {
+  because_similar_to: number;
+  shared_notes: string[];
+  shared_accords: string[];
+  wardrobe: Array<{
+    liked_id: number;
+    co_count: number;
+  }>;
+  performance?: {
+    longevity: number;
+    longevity_votes: number;
+    sillage: number;
+    sillage_votes: number;
+  };
+}
+
+/**
+ * DNA card item
+ */
+export interface DNACardItem {
+  name: string;
+  weight: number;
+  percentage?: number;
+}
+
+/**
+ * DNA card
+ */
+export interface DNACard {
+  families: DNACardItem[];
+  accords: DNACardItem[];
+  notes: DNACardItem[];
 }
 
 /**
@@ -83,22 +133,61 @@ export interface Recommendation {
   id: number;
   name: string;
   brand: string;
+  year?: number;
+  description?: string;
+  perfumer?: string;
+  gender: string;
+  accords: string[];
+  notes: string[];
   image: string;
   score: number;
-  explanation?: string;
-  shared_notes?: string[];
-  shared_accords?: string[];
+  signals: RecommendationSignals;
+  why: RecommendationWhy;
+  dna_card: DNACard;
+}
+
+/**
+ * Fingerprint summary
+ */
+export interface FingerprintSummary {
+  summary: string;
+  families: Array<{ name: string; percentage: number }>;
+  accords: Array<{ name: string; percentage: number }>;
+  notes: Array<{ name: string; percentage: number }>;
+  missing?: Array<{
+    category: string;
+    name: string;
+    suggestion: string;
+  }>;
+}
+
+/**
+ * Recommendation response data
+ */
+export interface RecommendationResponseData {
+  liked_count: number;
+  results: Recommendation[];
+  fingerprint: FingerprintSummary;
 }
 
 /**
  * Recommendation response
  */
 export interface RecommendationResponse {
-  recommendations: Recommendation[];
-  taste_fingerprint?: {
-    dominant_families: string[];
-    preferred_accords: string[];
-    common_notes: string[];
+  data: RecommendationResponseData;
+  meta?: {
+    requestId: string;
+  };
+}
+
+/**
+ * API Error response
+ */
+export interface APIErrorResponse {
+  error: {
+    code: string;
+    message: string;
+    requestId?: string;
   };
 }
 
@@ -120,8 +209,11 @@ async function fetchAPI<T>(
       },
     });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
+    const data = await response.json();
+
+    // Check if response contains an error object
+    if (!response.ok || ("error" in data && data.error)) {
+      const errorData = (data as APIErrorResponse).error || {};
       throw new APIError(
         errorData.message || `API request failed: ${response.statusText}`,
         response.status,
@@ -129,7 +221,6 @@ async function fetchAPI<T>(
       );
     }
 
-    const data = await response.json();
     return data;
   } catch (error) {
     if (error instanceof APIError) {
@@ -198,19 +289,32 @@ export async function searchPerfumes(
 export async function getRecommendations(
   request: RecommendationRequest
 ): Promise<RecommendationResponse> {
-  if (!request.perfume_ids || request.perfume_ids.length === 0) {
-    throw new APIError("At least one perfume ID is required", 400, "INVALID_REQUEST");
+  if (!request.liked_perfume_ids || request.liked_perfume_ids.length === 0) {
+    throw new APIError("At least one perfume ID is required", 400, "VALIDATION_ERROR");
   }
 
-  const response = await fetchAPI<{ data: RecommendationResponse }>(
-    "/recommendations",
+  const likedPerfumeIds = request.liked_perfume_ids.map((id) => Number(id));
+
+  const requestBody: RecommendationRequest = {
+    liked_perfume_ids: likedPerfumeIds,
+    limit: request.limit ?? 10,
+    diversify_brand: request.diversify_brand ?? true,
+  };
+
+  // Only include gender if it's specified
+  if (request.gender) {
+    requestBody.gender = request.gender;
+  }
+
+  const response = await fetchAPI<RecommendationResponse>(
+    "/perfumes/recommend",
     {
       method: "POST",
-      body: JSON.stringify(request),
+      body: JSON.stringify(requestBody),
     }
   );
 
-  return response.data;
+  return response;
 }
 
 /**

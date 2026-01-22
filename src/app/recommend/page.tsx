@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Search, X, Plus, AlertCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Search, X, Plus, AlertCircle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
@@ -11,10 +12,13 @@ import {
   type Perfume,
   type APIError,
 } from "@/lib/api";
+import { useRecommendationStore } from "@/lib/store";
 
 type PerfumeType = "male" | "female" | "unisex" | "any";
 
 export default function RecommendPage() {
+  const router = useRouter();
+  const setRecommendations = useRecommendationStore((state) => state.setRecommendations);
   const [perfumeType, setPerfumeType] = useState<PerfumeType | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Perfume[]>([]);
@@ -157,12 +161,20 @@ export default function RecommendPage() {
           )}
 
           {perfumeType && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="glass-panel p-8 md:p-10 space-y-6"
-            >
-              <div className="flex items-center justify-between">
+            <div className="space-y-4">
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setPerfumeType(null)}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer whitespace-nowrap"
+                >
+                  Change type
+                </button>
+              </div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="glass-panel p-8 md:p-10 space-y-6"
+              >
                 <div>
                   <h2 className="text-xl md:text-2xl font-semibold text-foreground">
                     Select perfumes you love
@@ -171,13 +183,6 @@ export default function RecommendPage() {
                     Add up to 10 perfumes ({selectedPerfumes.length}/10)
                   </p>
                 </div>
-                <button
-                  onClick={() => setPerfumeType(null)}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Change type
-                </button>
-              </div>
 
               <div className="relative">
                 <div className="relative">
@@ -302,7 +307,6 @@ export default function RecommendPage() {
                 </div>
               )}
 
-              {/* Error Message */}
               {searchError && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
@@ -316,38 +320,137 @@ export default function RecommendPage() {
 
               {selectedPerfumes.length > 0 && (
                 <div className="pt-4">
-                  <Button
-                    size="lg"
-                    className="w-full md:w-auto"
-                    disabled={isSubmitting}
-                    onClick={async () => {
-                      setIsSubmitting(true);
-                      try {
-                        const recommendations = await getRecommendations({
-                          perfume_ids: selectedPerfumes.map((p) => p.id),
-                          type: perfumeType === "any" ? undefined : perfumeType,
-                        });
-                        // TODO: Navigate to results page with recommendations
-                        console.log("Recommendations:", recommendations);
-                      } catch (error) {
-                        const apiError = error as APIError;
-                        setSearchError(
-                          apiError.message ||
-                            "Failed to get recommendations. Please try again."
-                        );
-                        console.error("Recommendation error:", error);
-                      } finally {
-                        setIsSubmitting(false);
-                      }
-                    }}
-                  >
-                    {isSubmitting
-                      ? "Getting Recommendations..."
-                      : `Get Recommendations (${selectedPerfumes.length})`}
-                  </Button>
+                  <AnimatePresence mode="wait">
+                    {isSubmitting ? (
+                      <motion.div
+                        key="loading"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="glass-panel p-8 md:p-12 rounded-[24px] text-center space-y-6"
+                      >
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{
+                            duration: 3,
+                            repeat: Infinity,
+                            ease: "linear",
+                          }}
+                          className="flex justify-center"
+                        >
+                          <div className="relative w-20 h-20 md:w-24 md:h-24">
+                            <motion.div
+                              animate={{
+                                scale: [1, 1.2, 1],
+                                opacity: [0.5, 1, 0.5],
+                              }}
+                              transition={{
+                                duration: 2,
+                                repeat: Infinity,
+                                ease: "easeInOut",
+                              }}
+                              className="absolute inset-0 rounded-full bg-primary/20 blur-xl"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <Sparkles className="w-10 h-10 md:w-12 md:h-12 text-primary" />
+                            </div>
+                          </div>
+                        </motion.div>
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="space-y-2"
+                        >
+                          <motion.h3
+                            key="curating"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="text-xl md:text-2xl font-semibold text-foreground"
+                          >
+                            Curating your recommendations
+                          </motion.h3>
+                          <motion.p
+                            animate={{
+                              opacity: [0.5, 1, 0.5],
+                            }}
+                            transition={{
+                              duration: 1.5,
+                              repeat: Infinity,
+                              ease: "easeInOut",
+                            }}
+                            className="text-sm md:text-base text-muted-foreground"
+                          >
+                            Analyzing your taste fingerprint...
+                          </motion.p>
+                        </motion.div>
+                        <div className="flex justify-center gap-1 pt-2">
+                          {[0, 1, 2].map((i) => (
+                            <motion.div
+                              key={i}
+                              className="w-2 h-2 rounded-full bg-primary"
+                              animate={{
+                                scale: [1, 1.5, 1],
+                                opacity: [0.5, 1, 0.5],
+                              }}
+                              transition={{
+                                duration: 1,
+                                repeat: Infinity,
+                                delay: i * 0.2,
+                                ease: "easeInOut",
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="button"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                      >
+                        <Button
+                          size="lg"
+                          className="w-full md:w-auto"
+                          disabled={isSubmitting}
+                          onClick={async () => {
+                            setIsSubmitting(true);
+                            setSearchError(null);
+                            try {
+                              const response = await getRecommendations({
+                                liked_perfume_ids: selectedPerfumes.map((p) => Number(p.id)),
+                                limit: 3,
+                                diversify_brand: true,
+                                gender:
+                                  perfumeType && perfumeType !== "any"
+                                    ? (perfumeType as "male" | "female" | "unisex")
+                                    : undefined,
+                              });
+                              // Store recommendations in Zustand store and navigate to results page
+                              setRecommendations(response);
+                              router.push("/recommend/results");
+                            } catch (error) {
+                              const apiError = error as APIError;
+                              setSearchError(
+                                apiError.message ||
+                                  "Failed to get recommendations. Please try again."
+                              );
+                              console.error("Recommendation error:", error);
+                            } finally {
+                              setIsSubmitting(false);
+                            }
+                          }}
+                        >
+                          Get Recommendations
+                        </Button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               )}
-            </motion.div>
+              </motion.div>
+            </div>
           )}
         </motion.div>
       </div>
