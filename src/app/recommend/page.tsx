@@ -206,7 +206,7 @@ export default function RecommendPage() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.2 }}
-                      className="absolute z-50 w-full mt-2 glass-panel border border-white/40 rounded-[16px] shadow-[0_20px_50px_rgba(0,0,0,0.15)] max-h-[400px] overflow-y-auto"
+                      className="absolute z-50 w-full mt-2 glass-dropdown overflow-y-auto"
                     >
                       <div className="p-2 space-y-1">
                         {searchResults.map((perfume) => {
@@ -219,13 +219,13 @@ export default function RecommendPage() {
                               disabled={isSelected || isMaxReached}
                               className={`w-full flex items-center gap-3 p-3 rounded-[12px] transition-all text-left ${
                                 isSelected
-                                  ? "bg-primary/20 cursor-not-allowed opacity-60"
+                                  ? "bg-primary/70 cursor-not-allowed opacity-90"
                                   : isMaxReached
                                   ? "cursor-not-allowed opacity-50"
-                                  : "hover:bg-white/20 cursor-pointer"
+                                  : "hover:bg-white/90 cursor-pointer"
                               }`}
                             >
-                              <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-white/10">
+                              <div className="relative w-12 aspect-3/4 rounded-lg overflow-hidden shrink-0 bg-white/10">
                                 {perfume.image ? (
                                   <Image
                                     src={perfume.image}
@@ -278,7 +278,7 @@ export default function RecommendPage() {
                           >
                             <X className="h-4 w-4" />
                           </button>
-                          <div className="relative w-full aspect-square rounded-lg overflow-hidden mb-2 bg-white/10">
+                          <div className="relative w-full aspect-3/4 rounded-lg overflow-hidden mb-2 bg-white/10">
                             {perfume.image ? (
                               <Image
                                 src={perfume.image}
