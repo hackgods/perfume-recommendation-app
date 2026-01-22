@@ -51,9 +51,17 @@
   h1, h2, h3, h4, h5, h6 {
     @apply text-[#333333];
   }
+
+  button {
+    @apply cursor-pointer;
+  }
 }
 
 @layer utilities {
+  .gradient-bg-primary {
+    @apply bg-linear-to-r from-rose-600/80 to-red-900;
+  }
+
   .gradient-text-primary {
     @apply bg-linear-to-r from-rose-600/80 to-red-900 bg-clip-text text-transparent;
   }
