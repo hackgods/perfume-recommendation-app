@@ -138,7 +138,7 @@ export default function ResultsPage() {
                 <motion.div
                   key={perfume.id}
                   variants={itemVariants}
-                  className="glass-panel relative overflow-hidden p-5 md:p-10 rounded-[32px] md:rounded-[40px] border-white/40 shadow-xl shadow-rose-900/5"
+                  className="glass-panel bg-white/80! relative overflow-hidden p-5 md:p-10 rounded-[32px] md:rounded-[40px] border-white/40 shadow-xl shadow-rose-900/5"
                 >
                   <div className="absolute top-4 right-4 md:right-0 md:left-4 z-50">
                     <div className="flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-primary/10 border border-primary/20 backdrop-blur-sm">
