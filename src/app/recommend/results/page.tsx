@@ -35,6 +35,7 @@ export default function ResultsPage() {
   const router = useRouter();
   const recommendations = useRecommendationStore((state) => state.recommendations);
   const [expandedDescriptions, setExpandedDescriptions] = useState<Set<number>>(new Set());
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     // Redirect to recommend page if no recommendations are available
@@ -50,6 +51,18 @@ export default function ResultsPage() {
         newSet.delete(id);
       } else {
         newSet.add(id);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleSection = (key: string) => {
+    setExpandedSections((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(key)) {
+        newSet.delete(key);
+      } else {
+        newSet.add(key);
       }
       return newSet;
     });
@@ -200,10 +213,29 @@ export default function ResultsPage() {
 
                       {perfume.dna_card?.accords && perfume.dna_card.accords.length > 0 && (
                         <div className="space-y-2">
-                          <h3 className="text-sm font-semibold text-foreground">Accords</h3>
+                          <div className="flex items-center justify-between">
+                            <h3 className="text-sm font-semibold text-foreground">Accords</h3>
+                            {perfume.dna_card.accords.length > 5 && (
+                              <button
+                                onClick={() => toggleSection(`${perfume.id}-accords`)}
+                                className="text-xs text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1 cursor-pointer"
+                              >
+                                {expandedSections.has(`${perfume.id}-accords`) ? (
+                                  <>
+                                    Show less <ChevronUp className="h-3 w-3" />
+                                  </>
+                                ) : (
+                                  <>
+                                    View all ({perfume.dna_card.accords.length}) <ChevronDown className="h-3 w-3" />
+                                  </>
+                                )}
+                              </button>
+                            )}
+                          </div>
                           <div className="flex flex-wrap gap-2">
                             {perfume.dna_card.accords
                               .sort((a, b) => (b.weight || 0) - (a.weight || 0))
+                              .slice(0, expandedSections.has(`${perfume.id}-accords`) ? undefined : 5)
                               .map((accord, idx) => (
                                 <motion.div
                                   key={idx}
@@ -226,10 +258,29 @@ export default function ResultsPage() {
 
                       {perfume.dna_card?.notes && perfume.dna_card.notes.length > 0 && (
                         <div className="space-y-2">
-                          <h3 className="text-sm font-semibold text-foreground">Notes</h3>
+                          <div className="flex items-center justify-between">
+                            <h3 className="text-sm font-semibold text-foreground">Notes</h3>
+                            {perfume.dna_card.notes.length > 5 && (
+                              <button
+                                onClick={() => toggleSection(`${perfume.id}-notes`)}
+                                className="text-xs text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1 cursor-pointer"
+                              >
+                                {expandedSections.has(`${perfume.id}-notes`) ? (
+                                  <>
+                                    Show less <ChevronUp className="h-3 w-3" />
+                                  </>
+                                ) : (
+                                  <>
+                                    View all ({perfume.dna_card.notes.length}) <ChevronDown className="h-3 w-3" />
+                                  </>
+                                )}
+                              </button>
+                            )}
+                          </div>
                           <div className="flex flex-wrap gap-2">
                             {perfume.dna_card.notes
                               .sort((a, b) => (b.weight || 0) - (a.weight || 0))
+                              .slice(0, expandedSections.has(`${perfume.id}-notes`) ? undefined : 5)
                               .map((note, idx) => (
                                 <motion.div
                                   key={idx}

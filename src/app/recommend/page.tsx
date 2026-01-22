@@ -420,7 +420,7 @@ export default function RecommendPage() {
                             try {
                               const response = await getRecommendations({
                                 liked_perfume_ids: selectedPerfumes.map((p) => Number(p.id)),
-                                limit: 3,
+                                limit: 10,
                                 diversify_brand: true,
                                 gender:
                                   perfumeType && perfumeType !== "any"
