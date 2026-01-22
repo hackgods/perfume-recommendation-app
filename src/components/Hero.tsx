@@ -22,7 +22,7 @@ const bottleImages = [
   { src: "/perfumes/bottle-4.png" },
 ] as const;
 
-export function Hero({ initialFeaturedIndex = 0 }: { initialFeaturedIndex?: number }) {
+export function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const [dimensions, setDimensions] = useState({ isMobile: false, isShort: false });
@@ -67,7 +67,17 @@ export function Hero({ initialFeaturedIndex = 0 }: { initialFeaturedIndex?: numb
   const bottleY = useTransform(smoothProgress, [0, 0.7, 1], ["5%", "0%", "-20%"]);
   const bottleRotate = useTransform(smoothProgress, [0, 1], [-10, 10]);
 
-  const [featuredIndex] = useState(() => Math.abs(initialFeaturedIndex) % bottleImages.length);
+  // Random selection happens only on client side to ensure it changes on each page load
+  // Start with 0 for SSR/hydration consistency, then randomize on client mount
+  const [featuredIndex, setFeaturedIndex] = useState(0);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setFeaturedIndex(Math.floor(Math.random() * bottleImages.length));
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
+  
   const featuredBottle = bottleImages[featuredIndex];
 
   const scrollToSection = (id: string) => {

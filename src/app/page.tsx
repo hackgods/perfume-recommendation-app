@@ -7,6 +7,8 @@ import { FinalCTA } from "@/components/FinalCTA";
 import { Footer } from "@/components/Footer";
 import type { Metadata } from "next";
 
+export const dynamic = 'force-static';
+
 export const metadata: Metadata = {
   title: "Discover Perfumes That Match Your Taste",
   description: "Start with fragrances you already love. We decode your taste fingerprint and reveal recommendations that match your taste. An intelligent perfume discovery system powered by machine learning.",
@@ -21,12 +23,10 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  const featuredIndex = Math.floor(Math.random() * 4);
-
   return (
     <main className="min-h-screen bg-background">
       <Navigation />
-      <Hero initialFeaturedIndex={featuredIndex} />
+      <Hero />
       
       <div className="relative z-20 shadow-[0_-50px_100px_rgba(0,0,0,0.1)]">
         <HowItWorks />
