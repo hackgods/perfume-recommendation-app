@@ -120,7 +120,7 @@ export function Hero() {
             <div className="space-y-1 md:space-y-2">
               <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1]">
                 Discover perfumes that match your{" "}
-                <span className="gradient-text-primary">taste</span>
+                <span className={dimensions.isMobile ? "gradient-text-glass" : "gradient-text-primary"}>taste</span>
               </h1>
             </div>
             
